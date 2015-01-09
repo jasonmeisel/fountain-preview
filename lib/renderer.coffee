@@ -21,7 +21,7 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
   # https://github.com/chjj/marked/issues/354
   text = text.replace(/^\s*<!doctype(\s+.*)?>\s*/i, '')
 
-  roaster text, options, (error, html) =>
+  complete = (error, html) =>
     return callback(error) if error
 
     grammar ?= atom.grammars.selectGrammar(filePath, text)
@@ -31,7 +31,13 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
     html = sanitize(html)
     html = resolveImagePaths(html, filePath)
     html = tokenizeCodeBlocks(html, defaultCodeLanguage)
-    callback(null, html.html().trim())
+    callback(null, "TEST: " + html.html().trim())
+
+  ext = ".fountain"
+  if filePath.indexOf(ext) == filePath.length - ext.length
+    complete(null, "lololol")
+  else
+    roaster text, options, complete
 
 exports.toText = (text, filePath, grammar, callback) ->
   exports.toHtml text, filePath, grammar, (error, html) ->
