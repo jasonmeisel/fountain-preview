@@ -45,9 +45,9 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
       # html += o.title_page_html
       # html += '</div>'
 
-      html += '<div class="page">'
+      # html += '<div class="page">'
       html += o.script_html
-      html += '</div>'
+      # html += '</div>'
 
       html += '</div>'
       html += '</div>'
@@ -120,6 +120,36 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
 
   # fix parentheticals
   $(html).find('.parenthetical').each (i, el) => $(el).insertBefore($(el).prev())
+
+  splitIntoPages = (el) =>
+    if $(el).find(".page").length != 0
+      return null
+
+    elements = [];
+    $(el).children().each (j, child) =>
+      elements.push $(child).detach()
+
+    while elements.length > 0
+      page = $("<div></div>")
+      page.addClass("page")
+      $(el).append(page)
+
+      while elements.length > 0 and page.innerHeight() >= page[0].scrollHeight
+        console.log page.innerHeight()
+        console.log page[0].scrollHeight
+        console.log page.innerHeight() >= page[0].scrollHeight
+        console.log " "
+
+        page.append elements[0]
+        elements.shift()
+
+      if elements.length > 0
+        elements.push page.children().last().detach()
+
+  setTimeout((() =>
+    splitIntoPages $("#script")
+    $(".markdown-preview").css("background", "gray")
+  ), 10)
 
   for preElement in $.merge(html.filter("pre"), html.find("pre"))
     codeBlock = $(preElement.firstChild)

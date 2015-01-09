@@ -20,7 +20,9 @@ body
 }
 
 .page {
-  padding: 1em;
+  padding: 3em;
+  height: 60em;
+  overflow: hidden;
 }
 
 .transition {
@@ -218,9 +220,7 @@ header::-moz-selection, header::selection { background: #454545; color: #fff; }
     text-align: left;
     width: 100%;
     z-index: 200;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.1);
-	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.1);
-	box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
