@@ -11,6 +11,7 @@
   "dependencies": {
     "atom-space-pen-views": "^2.0.0",
     "cheerio": "0.15.0",
+    "fountain-js": "0.0.1",
     "fs-plus": "^2.0.0",
     "grim": "^1.0.0",
     "highlights": "0.13.0",

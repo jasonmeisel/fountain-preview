@@ -31,11 +31,28 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
     html = sanitize(html)
     html = resolveImagePaths(html, filePath)
     html = tokenizeCodeBlocks(html, defaultCodeLanguage)
-    callback(null, "TEST: " + html.html().trim())
+    callback(null, html.html().trim())
 
   ext = ".fountain"
   if filePath.indexOf(ext) == filePath.length - ext.length
-    complete(null, "lololol")
+    fountain = require 'fountain-js'
+    fountain.parse text, (o) =>
+      html = ''
+      html += '<div id="workspace">'
+      html += '<div id="script">'
+
+      # html += '<div class="page title-page">'
+      # html += o.title_page_html
+      # html += '</div>'
+
+      html += '<div class="page">'
+      html += o.script_html
+      html += '</div>'
+
+      html += '</div>'
+      html += '</div>'
+
+      complete(null, html)
   else
     roaster text, options, complete
 
@@ -100,6 +117,9 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
 
   if fontFamily = atom.config.get('editor.fontFamily')
     $(html).find('code').css('font-family', fontFamily)
+
+  # fix parentheticals
+  $(html).find('.parenthetical').each (i, el) => $(el).insertBefore($(el).prev())
 
   for preElement in $.merge(html.filter("pre"), html.find("pre"))
     codeBlock = $(preElement.firstChild)
