@@ -20,14 +20,20 @@ body
 }
 
 .page {
-  padding: 3em;
+  padding: 2em 3em;
   height: 60em;
   overflow: hidden;
 }
 
+.page:before {
+  content: attr(pageNumber);
+  display: block;
+  text-align: right;
+  margin-bottom: 2em;
+}
+
 .transition {
   text-align: right;
-  padding-right: 2em;
 }
 
 a { color: #ED303C; text-decoration: none; }

@@ -129,10 +129,12 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
     $(el).children().each (j, child) =>
       elements.push $(child).detach()
 
+    pageNumber = 0
     while elements.length > 0
       page = $("<div></div>")
       page.addClass("page")
       $(el).append(page)
+      page.attr "pageNumber", ++pageNumber
 
       while elements.length > 0 and page.innerHeight() >= page[0].scrollHeight
         console.log page.innerHeight()
