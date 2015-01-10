@@ -131,22 +131,21 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
 
     pageNumber = 0
     while elements.length > 0
+      console.log elements[elements.length - 1].text()
+
       page = $("<div></div>")
       page.addClass("page")
       $(el).append(page)
       page.attr "pageNumber", ++pageNumber
 
+      lastEl = null
       while elements.length > 0 and page.innerHeight() >= page[0].scrollHeight
-        console.log page.innerHeight()
-        console.log page[0].scrollHeight
-        console.log page.innerHeight() >= page[0].scrollHeight
-        console.log " "
-
-        page.append elements[0]
+        lastEl = elements[0]
+        page.append lastEl
         elements.shift()
 
-      if elements.length > 0
-        elements.push page.children().last().detach()
+      if page.innerHeight() < page[0].scrollHeight
+        elements.unshift lastEl.detach()
 
   setTimeout((() =>
     splitIntoPages $("#script")
