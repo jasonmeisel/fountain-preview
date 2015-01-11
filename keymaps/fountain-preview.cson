@@ -1,0 +1,16 @@
+'atom-workspace, atom-workspace atom-text-editor':
+  'ctrl-M': 'fountain-preview:toggle'
+
+'.platform-darwin .fountain-preview':
+  'cmd-+': 'fountain-preview:zoom-in'
+  'cmd-=': 'fountain-preview:zoom-in'
+  'cmd--': 'fountain-preview:zoom-out'
+  'cmd-_': 'fountain-preview:zoom-out'
+  'cmd-0': 'fountain-preview:reset-zoom'
+
+'.platform-win32 .fountain-preview, .platform-linux .fountain-preview':
+  'ctrl-+': 'fountain-preview:zoom-in'
+  'ctrl-=': 'fountain-preview:zoom-in'
+  'ctrl--': 'fountain-preview:zoom-out'
+  'ctrl-_': 'fountain-preview:zoom-out'
+  'ctrl-0': 'fountain-preview:reset-zoom'

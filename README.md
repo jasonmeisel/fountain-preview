@@ -1,9 +1,9 @@
-# Fountain Preview package [![Build Status](https://travis-ci.org/atom/markdown-preview.svg?branch=master)](https://travis-ci.org/atom/markdown-preview)
+# Fountain Preview package [![Build Status](https://travis-ci.org/atom/fountain-preview.svg?branch=master)](https://travis-ci.org/atom/fountain-preview)
 
 Show the rendered HTML fountain to the right of the current editor using
 `ctrl-shift-m`
 
 It can be activated from the editor using the `ctrl-shift-m` key-binding and is
-currently enabled for `.markdown`, `.md`, `.mkd`, `.mkdown`, and `.ron` files.
+currently enabled for `.fountain`, `.md`, `.mkd`, `.mkdown`, and `.ron` files.
 
-![](https://raw.githubusercontent.com/jasonmeisel/markdown-preview/master/screen.png)
+![](https://raw.githubusercontent.com/jasonmeisel/fountain-preview/master/screen.png)

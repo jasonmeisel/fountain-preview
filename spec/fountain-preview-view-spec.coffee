@@ -1,32 +1,32 @@
 path = require 'path'
 fs = require 'fs-plus'
 temp = require 'temp'
-MarkdownPreviewView = require '../lib/markdown-preview-view'
+FountainPreviewView = require '../lib/fountain-preview-view'
 
-describe "MarkdownPreviewView", ->
+describe "FountainPreviewView", ->
   [file, preview, workspaceElement] = []
 
   beforeEach ->
-    filePath = atom.project.resolve('subdir/file.markdown')
-    preview = new MarkdownPreviewView({filePath})
+    filePath = atom.project.resolve('subdir/file.fountain')
+    preview = new FountainPreviewView({filePath})
     jasmine.attachToDOM(preview.element)
 
     waitsForPromise ->
       atom.packages.activatePackage('language-ruby')
 
     waitsForPromise ->
-      atom.packages.activatePackage('markdown-preview')
+      atom.packages.activatePackage('fountain-preview')
 
   afterEach ->
     preview.destroy()
 
   describe "::constructor", ->
-    it "shows a loading spinner and renders the markdown", ->
+    it "shows a loading spinner and renders the fountain", ->
       preview.showLoading()
-      expect(preview.find('.markdown-spinner')).toExist()
+      expect(preview.find('.fountain-spinner')).toExist()
 
       waitsForPromise ->
-        preview.renderMarkdown()
+        preview.renderFountain()
 
       runs ->
         expect(preview.find(".emoji")).toExist()
@@ -50,10 +50,10 @@ describe "MarkdownPreviewView", ->
       preview.destroy()
 
       waitsForPromise ->
-        atom.workspace.open('new.markdown')
+        atom.workspace.open('new.fountain')
 
       runs ->
-        preview = new MarkdownPreviewView({editorId: atom.workspace.getActiveTextEditor().id})
+        preview = new FountainPreviewView({editorId: atom.workspace.getActiveTextEditor().id})
 
         jasmine.attachToDOM(preview.element)
         expect(preview.getPath()).toBe atom.workspace.getActiveTextEditor().getPath()
@@ -65,7 +65,7 @@ describe "MarkdownPreviewView", ->
   describe "code block tokenization", ->
     beforeEach ->
       waitsForPromise ->
-        preview.renderMarkdown()
+        preview.renderFountain()
 
     describe "when the code block's fence name has a matching grammar", ->
       it "tokenizes the code block with the grammar", ->
@@ -89,7 +89,7 @@ describe "MarkdownPreviewView", ->
   describe "image resolving", ->
     beforeEach ->
       waitsForPromise ->
-        preview.renderMarkdown()
+        preview.renderFountain()
 
     describe "when the image uses a relative path", ->
       it "resolves to a path relative to the file", ->
@@ -107,11 +107,11 @@ describe "MarkdownPreviewView", ->
 
         filePath = path.join(temp.mkdirSync('atom'), 'foo.md')
         fs.writeFileSync(filePath, "![absolute](#{filePath})")
-        preview = new MarkdownPreviewView({filePath})
+        preview = new FountainPreviewView({filePath})
         jasmine.attachToDOM(preview.element)
 
         waitsForPromise ->
-          preview.renderMarkdown()
+          preview.renderFountain()
 
         runs ->
           expect(preview.find("img[alt=absolute]").attr('src')).toBe filePath
@@ -124,20 +124,20 @@ describe "MarkdownPreviewView", ->
   describe "gfm newlines", ->
     describe "when gfm newlines are not enabled", ->
       it "creates a single paragraph with <br>", ->
-        atom.config.set('markdown-preview.breakOnSingleNewline', false)
+        atom.config.set('fountain-preview.breakOnSingleNewline', false)
 
         waitsForPromise ->
-          preview.renderMarkdown()
+          preview.renderFountain()
 
         runs ->
           expect(preview.find("p:last-child br").length).toBe 0
 
     describe "when gfm newlines are enabled", ->
       it "creates a single paragraph with no <br>", ->
-        atom.config.set('markdown-preview.breakOnSingleNewline', true)
+        atom.config.set('fountain-preview.breakOnSingleNewline', true)
 
         waitsForPromise ->
-          preview.renderMarkdown()
+          preview.renderFountain()
 
         runs ->
           expect(preview.find("p:last-child br").length).toBe 1
@@ -146,7 +146,7 @@ describe "MarkdownPreviewView", ->
     beforeEach ->
       preview.destroy()
       filePath = atom.project.resolve('subdir/simple.md')
-      preview = new MarkdownPreviewView({filePath})
+      preview = new FountainPreviewView({filePath})
       jasmine.attachToDOM(preview.element)
 
     it "saves the rendered HTML and opens it", ->
@@ -154,7 +154,7 @@ describe "MarkdownPreviewView", ->
       expect(fs.isFileSync(outputPath)).toBe false
 
       waitsForPromise ->
-        preview.renderMarkdown()
+        preview.renderFountain()
 
       runs ->
         spyOn(atom, 'showSaveDialogSync').andReturn(outputPath)
@@ -176,12 +176,12 @@ describe "MarkdownPreviewView", ->
     beforeEach ->
       preview.destroy()
       filePath = atom.project.resolve('subdir/simple.md')
-      preview = new MarkdownPreviewView({filePath})
+      preview = new FountainPreviewView({filePath})
       jasmine.attachToDOM(preview.element)
 
     it "writes the rendered HTML to the clipboard", ->
       waitsForPromise ->
-        preview.renderMarkdown()
+        preview.renderFountain()
 
       runs ->
         atom.commands.dispatch preview.element, 'core:copy'

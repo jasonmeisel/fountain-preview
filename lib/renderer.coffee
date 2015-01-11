@@ -15,7 +15,7 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
   roaster ?= require 'roaster'
   options =
     sanitize: false
-    breaks: atom.config.get('markdown-preview.breakOnSingleNewline')
+    breaks: atom.config.get('fountain-preview.breakOnSingleNewline')
 
   # Remove the <!doctype> since otherwise marked will escape it
   # https://github.com/chjj/marked/issues/354
@@ -149,7 +149,7 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
 
   setTimeout((() =>
     splitIntoPages $("#script")
-    $(".markdown-preview").css("background", "gray")
+    $(".fountain-preview").css("background", "gray")
   ), 10)
 
   for preElement in $.merge(html.filter("pre"), html.find("pre"))

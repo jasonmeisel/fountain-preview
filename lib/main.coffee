@@ -2,21 +2,21 @@ url = require 'url'
 fs = require 'fs-plus'
 {$} = require 'atom-space-pen-views'
 
-MarkdownPreviewView = null # Defer until used
+FountainPreviewView = null # Defer until used
 renderer = null # Defer until used
 
-createMarkdownPreviewView = (state) ->
-  MarkdownPreviewView ?= require './markdown-preview-view'
-  new MarkdownPreviewView(state)
+createFountainPreviewView = (state) ->
+  FountainPreviewView ?= require './fountain-preview-view'
+  new FountainPreviewView(state)
 
-isMarkdownPreviewView = (object) ->
-  MarkdownPreviewView ?= require './markdown-preview-view'
-  object instanceof MarkdownPreviewView
+isFountainPreviewView = (object) ->
+  FountainPreviewView ?= require './fountain-preview-view'
+  object instanceof FountainPreviewView
 
 atom.deserializers.add
-  name: 'MarkdownPreviewView'
+  name: 'FountainPreviewView'
   deserialize: (state) ->
-    createMarkdownPreviewView(state) if state.constructor is Object
+    createFountainPreviewView(state) if state.constructor is Object
 
 module.exports =
   config:
@@ -38,21 +38,21 @@ module.exports =
 
   activate: ->
     atom.commands.add 'atom-workspace',
-      'markdown-preview:toggle': =>
+      'fountain-preview:toggle': =>
         @toggle()
-      'markdown-preview:copy-html': =>
+      'fountain-preview:copy-html': =>
         @copyHtml()
-      'markdown-preview:toggle-break-on-single-newline': ->
-        keyPath = 'markdown-preview.breakOnSingleNewline'
+      'fountain-preview:toggle-break-on-single-newline': ->
+        keyPath = 'fountain-preview.breakOnSingleNewline'
         atom.config.set(keyPath, !atom.config.get(keyPath))
 
     previewFile = @previewFile.bind(this)
-    atom.commands.add '.tree-view .file .name[data-name$=\\.md]', 'markdown-preview:preview-file', previewFile
-    atom.commands.add '.tree-view .file .name[data-name$=\\.mdown]', 'markdown-preview:preview-file', previewFile
-    atom.commands.add '.tree-view .file .name[data-name$=\\.mkd]', 'markdown-preview:preview-file', previewFile
-    atom.commands.add '.tree-view .file .name[data-name$=\\.mkdown]', 'markdown-preview:preview-file', previewFile
-    atom.commands.add '.tree-view .file .name[data-name$=\\.ron]', 'markdown-preview:preview-file', previewFile
-    atom.commands.add '.tree-view .file .name[data-name$=\\.text]', 'markdown-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.md]', 'fountain-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.mdown]', 'fountain-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.mkd]', 'fountain-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.mkdown]', 'fountain-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.ron]', 'fountain-preview:preview-file', previewFile
+    atom.commands.add '.tree-view .file .name[data-name$=\\.text]', 'fountain-preview:preview-file', previewFile
 
     atom.workspace.addOpener (uriToOpen) ->
       try
@@ -60,7 +60,7 @@ module.exports =
       catch error
         return
 
-      return unless protocol is 'markdown-preview:'
+      return unless protocol is 'fountain-preview:'
 
       try
         pathname = decodeURI(pathname) if pathname
@@ -68,25 +68,25 @@ module.exports =
         return
 
       if host is 'editor'
-        createMarkdownPreviewView(editorId: pathname.substring(1))
+        createFountainPreviewView(editorId: pathname.substring(1))
       else
-        createMarkdownPreviewView(filePath: pathname)
+        createFountainPreviewView(filePath: pathname)
 
   toggle: ->
-    if isMarkdownPreviewView(atom.workspace.getActivePaneItem())
+    if isFountainPreviewView(atom.workspace.getActivePaneItem())
       atom.workspace.destroyActivePaneItem()
       return
 
     editor = atom.workspace.getActiveTextEditor()
     return unless editor?
 
-    grammars = atom.config.get('markdown-preview.grammars') ? []
+    grammars = atom.config.get('fountain-preview.grammars') ? []
     return unless editor.getGrammar().scopeName in grammars
 
     @addPreviewForEditor(editor) unless @removePreviewForEditor(editor)
 
   uriForEditor: (editor) ->
-    "markdown-preview://editor/#{editor.id}"
+    "fountain-preview://editor/#{editor.id}"
 
   removePreviewForEditor: (editor) ->
     uri = @uriForEditor(editor)
@@ -100,8 +100,8 @@ module.exports =
   addPreviewForEditor: (editor) ->
     uri = @uriForEditor(editor)
     previousActivePane = atom.workspace.getActivePane()
-    atom.workspace.open(uri, split: 'right', searchAllPanes: true).done (markdownPreviewView) ->
-      if isMarkdownPreviewView(markdownPreviewView)
+    atom.workspace.open(uri, split: 'right', searchAllPanes: true).done (fountainPreviewView) ->
+      if isFountainPreviewView(fountainPreviewView)
         previousActivePane.activate()
 
   previewFile: ({target}) ->
@@ -112,7 +112,7 @@ module.exports =
       @addPreviewForEditor(editor)
       return
 
-    atom.workspace.open "markdown-preview://#{encodeURI(filePath)}", searchAllPanes: true
+    atom.workspace.open "fountain-preview://#{encodeURI(filePath)}", searchAllPanes: true
 
   copyHtml: ->
     editor = atom.workspace.getActiveTextEditor()
@@ -122,6 +122,6 @@ module.exports =
     text = editor.getSelectedText() or editor.getText()
     renderer.toText text, editor.getPath(), editor.getGrammar(), (error, html) =>
       if error
-        console.warn('Copying Markdown as HTML failed', error)
+        console.warn('Copying Fountain as HTML failed', error)
       else
         atom.clipboard.write(html)
