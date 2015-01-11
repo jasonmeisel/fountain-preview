@@ -1,9 +1,9 @@
 {
-  "name": "markdown-preview",
+  "name": "fountain-preview",
   "version": "0.116.0",
   "main": "./lib/main",
-  "description": "Open a rendered version of the Markdown in the current editor with `ctrl-shift-m`.",
-  "repository": "https://github.com/atom/markdown-preview",
+  "description": "Open a rendered version of the Fountain in the current editor with `ctrl-shift-m`.",
+  "repository": "https://github.com/jasonmeisel/fountain-preview",
   "license": "MIT",
   "engines": {
     "atom": "*"

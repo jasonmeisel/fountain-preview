@@ -10,9 +10,9 @@ fs = require 'fs-plus'
 renderer = require './renderer'
 
 module.exports =
-class MarkdownPreviewView extends ScrollView
+class FountainPreviewView extends ScrollView
   @content: ->
-    @div class: 'markdown-preview native-key-bindings', tabindex: -1
+    @div class: 'fountain-preview native-key-bindings', tabindex: -1
 
   constructor: ({@editorId, @filePath}) ->
     super
@@ -33,7 +33,7 @@ class MarkdownPreviewView extends ScrollView
           @subscribeToFilePath(@filePath)
 
   serialize: ->
-    deserializer: 'MarkdownPreviewView'
+    deserializer: 'FountainPreviewView'
     filePath: @getPath()
     editorId: @editorId
 
@@ -47,19 +47,19 @@ class MarkdownPreviewView extends ScrollView
     # No op to suppress deprecation warning
     new Disposable
 
-  onDidChangeMarkdown: (callback) ->
-    @emitter.on 'did-change-markdown', callback
+  onDidChangeFountain: (callback) ->
+    @emitter.on 'did-change-fountain', callback
 
   on: (eventName) ->
-    if eventName is 'markdown-preview:markdown-changed'
-      Grim.deprecate("Use MarkdownPreviewView::onDidChangeMarkdown instead of the 'markdown-preview:markdown-changed' jQuery event")
+    if eventName is 'fountain-preview:fountain-changed'
+      Grim.deprecate("Use FountainPreviewView::onDidChangeFountain instead of the 'fountain-preview:fountain-changed' jQuery event")
     super
 
   subscribeToFilePath: (filePath) ->
     @file = new File(filePath)
     @emitter.emit 'did-change-title'
     @handleEvents()
-    @renderMarkdown()
+    @renderFountain()
 
   resolveEditor: (editorId) ->
     resolve = =>
@@ -68,7 +68,7 @@ class MarkdownPreviewView extends ScrollView
       if @editor?
         @emitter.emit 'did-change-title' if @editor?
         @handleEvents()
-        @renderMarkdown()
+        @renderFountain()
       else
         # The editor this preview was created for has been closed so close
         # this preview since a preview cannot be rendered without an editor
@@ -85,8 +85,8 @@ class MarkdownPreviewView extends ScrollView
     null
 
   handleEvents: ->
-    @disposables.add atom.grammars.onDidAddGrammar _.debounce((=> @renderMarkdown()), 250)
-    @disposables.add atom.grammars.onDidUpdateGrammar _.debounce((=> @renderMarkdown()), 250)
+    @disposables.add atom.grammars.onDidAddGrammar _.debounce((=> @renderFountain()), 250)
+    @disposables.add atom.grammars.onDidUpdateGrammar _.debounce((=> @renderFountain()), 250)
 
     atom.commands.add @element,
       'core:move-up': =>
@@ -98,17 +98,17 @@ class MarkdownPreviewView extends ScrollView
         @saveAs()
       'core:copy': (event) =>
         event.stopPropagation() if @copyToClipboard()
-      'markdown-preview:zoom-in': =>
+      'fountain-preview:zoom-in': =>
         zoomLevel = parseFloat(@css('zoom')) or 1
         @css('zoom', zoomLevel + .1)
-      'markdown-preview:zoom-out': =>
+      'fountain-preview:zoom-out': =>
         zoomLevel = parseFloat(@css('zoom')) or 1
         @css('zoom', zoomLevel - .1)
-      'markdown-preview:reset-zoom': =>
+      'fountain-preview:reset-zoom': =>
         @css('zoom', 1)
 
     changeHandler = =>
-      @renderMarkdown()
+      @renderFountain()
 
       # TODO: Remove paneForUri call when ::paneForItem is released
       pane = atom.workspace.paneForItem?(this) ? atom.workspace.paneForUri(@getUri())
@@ -119,31 +119,31 @@ class MarkdownPreviewView extends ScrollView
       @disposables.add @file.onDidChange(changeHandler)
     else if @editor?
       @disposables.add @editor.getBuffer().onDidStopChanging =>
-        changeHandler() if atom.config.get 'markdown-preview.liveUpdate'
+        changeHandler() if atom.config.get 'fountain-preview.liveUpdate'
       @disposables.add @editor.onDidChangePath => @emitter.emit 'did-change-title'
       @disposables.add @editor.getBuffer().onDidSave =>
-        changeHandler() unless atom.config.get 'markdown-preview.liveUpdate'
+        changeHandler() unless atom.config.get 'fountain-preview.liveUpdate'
       @disposables.add @editor.getBuffer().onDidReload =>
-        changeHandler() unless atom.config.get 'markdown-preview.liveUpdate'
+        changeHandler() unless atom.config.get 'fountain-preview.liveUpdate'
 
-    @disposables.add atom.config.onDidChange 'markdown-preview.breakOnSingleNewline', changeHandler
+    @disposables.add atom.config.onDidChange 'fountain-preview.breakOnSingleNewline', changeHandler
 
-  renderMarkdown: ->
+  renderFountain: ->
     @showLoading()
     if @file?
-      @file.read().then (contents) => @renderMarkdownText(contents)
+      @file.read().then (contents) => @renderFountainText(contents)
     else if @editor?
-      @renderMarkdownText(@editor.getText())
+      @renderFountainText(@editor.getText())
 
-  renderMarkdownText: (text) ->
+  renderFountainText: (text) ->
     renderer.toHtml text, @getPath(), @getGrammar(), (error, html) =>
       if error
         @showError(error)
       else
         @loading = false
         @html(html)
-        @emitter.emit 'did-change-markdown'
-        @originalTrigger('markdown-preview:markdown-changed')
+        @emitter.emit 'did-change-fountain'
+        @originalTrigger('fountain-preview:fountain-changed')
 
   getTitle: ->
     if @file?
@@ -151,16 +151,16 @@ class MarkdownPreviewView extends ScrollView
     else if @editor?
       "#{@editor.getTitle()} Preview"
     else
-      "Markdown Preview"
+      "Fountain Preview"
 
   getIconName: ->
-    "markdown"
+    "fountain"
 
   getUri: ->
     if @file?
-      "markdown-preview://#{@getPath()}"
+      "fountain-preview://#{@getPath()}"
     else
-      "markdown-preview://editor/#{@editorId}"
+      "fountain-preview://editor/#{@editorId}"
 
   getPath: ->
     if @file?
@@ -175,13 +175,13 @@ class MarkdownPreviewView extends ScrollView
     failureMessage = result?.message
 
     @html $$$ ->
-      @h2 'Previewing Markdown Failed'
+      @h2 'Previewing Fountain Failed'
       @h3 failureMessage if failureMessage?
 
   showLoading: ->
     @loading = true
     @html $$$ ->
-      @div class: 'markdown-spinner', 'Loading Markdown\u2026'
+      @div class: 'fountain-spinner', 'Loading Fountain\u2026'
 
   copyToClipboard: ->
     return false if @loading
@@ -209,7 +209,7 @@ class MarkdownPreviewView extends ScrollView
 
     if htmlFilePath = atom.showSaveDialogSync(filePath)
       # Hack to prevent encoding issues
-      # https://github.com/atom/markdown-preview/issues/96
+      # https://github.com/atom/fountain-preview/issues/96
       html = @[0].innerHTML.split('').join('')
 
       fs.writeFileSync(htmlFilePath, html)

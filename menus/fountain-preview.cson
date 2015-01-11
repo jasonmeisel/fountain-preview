@@ -1,0 +1,18 @@
+'menu': [
+  'label': 'Packages'
+  'submenu': [
+    'label': 'Fountain Preview'
+    'submenu': [
+      'label': 'Toggle Preview'
+      'command': 'fountain-preview:toggle'
+    ]
+  ]
+]
+
+'context-menu':
+  '.fountain-preview': [
+    {label: 'Copy As HTML', command: 'core:copy'}
+    {label: 'Save As HTML\u2026', command: 'core:save-as'}
+  ]
+  '.tree-view .file .name[data-name$=\\.fountain]':
+    [{label: 'Fountain Preview', command:  'fountain-preview:preview-file'}]
