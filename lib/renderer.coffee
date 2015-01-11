@@ -41,13 +41,12 @@ exports.toHtml = (text='', filePath, grammar, callback) ->
       html += '<div id="workspace">'
       html += '<div id="script">'
 
-      # html += '<div class="page title-page">'
-      # html += o.title_page_html
-      # html += '</div>'
+      if o.title_page_html?.length > 0
+        html += '<div class="page title-page">'
+        html += o.title_page_html
+        html += '</div>'
 
-      # html += '<div class="page">'
       html += o.script_html
-      # html += '</div>'
 
       html += '</div>'
       html += '</div>'
@@ -122,12 +121,9 @@ tokenizeCodeBlocks = (html, defaultLanguage='text') ->
   $(html).find('.parenthetical').each (i, el) => $(el).insertBefore($(el).prev())
 
   splitIntoPages = (el) =>
-    if $(el).find(".page").length != 0
-      return null
-
     elements = [];
     $(el).children().each (j, child) =>
-      elements.push $(child).detach()
+      elements.push $(child).detach() unless $(child).hasClass("page")
 
     pageNumber = 0
     while elements.length > 0
